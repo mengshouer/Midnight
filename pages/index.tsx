@@ -12,6 +12,7 @@ export default function Index({
   mdContent: string;
   url: string;
 }) {
+  const [siteFlag, setSiteFlag] = useState(false);
   const [activeTab, setActiveTab] = useState("Update");
   return (
     <Layout>
@@ -24,7 +25,19 @@ export default function Index({
           {activeTab === "Update" ? <UpdateEnv /> : <ManageEnv />}
         </div>
       </div>
-      {url && <iframe className="rounded-xl w-full h-[60vh]" src={url} />}
+      {!siteFlag && (
+        <button
+          className="btn btn-block"
+          onClick={() => {
+            setSiteFlag(true);
+          }}
+        >
+          Click on my load iframe
+        </button>
+      )}
+      {siteFlag && url && (
+        <iframe className="rounded-xl w-full h-[60vh]" src={url} />
+      )}
       {/* 渲染 markdown */}
       {mdContent && <Footer content={mdContent} />}
     </Layout>
