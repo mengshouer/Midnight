@@ -3,9 +3,10 @@ import { useMutation } from "react-query";
 
 export default function UpdateEnv() {
   const [env, setEnv] = useState("");
+  const [remarks, setRemarks] = useState("");
   const [alert, setAlert] = useState("");
   const { mutateAsync: updateEnv } = useMutation(
-    (data: string) =>
+    (data: { cookie: string; remarks: string }) =>
       fetch("/api/ql/update", {
         method: "POST",
         headers: {
@@ -22,24 +23,34 @@ export default function UpdateEnv() {
   );
 
   const handleUpdate = () => {
-    updateEnv(env);
+    updateEnv({ cookie: env, remarks });
   };
 
   return (
     <div className="flex flex-col">
-      <div className="flex">
-        <input
-          onChange={(e) => setEnv(e.target.value)}
-          type="text"
-          placeholder="Type Cookie here"
-          className="input input-bordered input-primary w-full max-w-xs"
-        />
+      <div className="flex flex-col">
+        <div className="flex mb-2">
+          <input
+            onChange={(e) => setEnv(e.target.value)}
+            type="text"
+            placeholder="Type Cookie here"
+            className="input input-bordered input-primary w-full max-w-md mr-2"
+          />
 
-        <div className="card-actions">
-          <button onClick={handleUpdate} className="btn btn-primary">
-            Update
-          </button>
+          <div className="card-actions">
+            <button onClick={handleUpdate} className="btn btn-primary">
+              Update
+            </button>
+          </div>
         </div>
+
+        <input
+          onChange={(e) => setRemarks(e.target.value)}
+          type="text"
+          maxLength={80}
+          placeholder="Remarks (Optional) -> 备注 (选填)"
+          className="input input-bordered hover:input-info w-full"
+        />
       </div>
       {alert && (
         <div className="alert alert-info shadow-lg mt-2">

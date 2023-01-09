@@ -20,10 +20,15 @@ const MessageHandler: NextApiHandler = async (req, res) => {
   }
 
   // 参数判断 & 更新
-  const { data } = req.body;
-  const validate = validateJDCK(data);
+  const { data }: { data: { cookie: string; remarks: string } } = req.body;
+  const validate = validateJDCK(data.cookie);
   if (validate) {
-    const response = await updateEnv("JD_COOKIE", data, validate.pt_pin);
+    const response = await updateEnv(
+      "JD_COOKIE",
+      data.cookie,
+      validate.pt_pin,
+      data.remarks
+    );
     if (response.code === 200) res.status(200).json({ message: "ok" });
     else res.status(500).json({ message: response.message });
   } else {

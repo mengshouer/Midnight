@@ -106,7 +106,8 @@ interface IUpdateEnv {
 export async function updateEnv(
   env_name: string,
   value: string,
-  value_name: string
+  value_name: string,
+  remarks = ""
 ) {
   const filter_env = await filterEnv(env_name);
   const _id = filterID(value_name, filter_env);
@@ -114,10 +115,12 @@ export async function updateEnv(
     {
       name: env_name,
       value,
+      remarks,
     },
   ];
   let response;
   if (_id) {
+    // ID 已经存在，更新变量
     data[0]["_id"] = _id;
     response = await fetch(`${ql_address}/open/envs`, {
       method: "PUT",
@@ -132,6 +135,7 @@ export async function updateEnv(
         return { code: 500, data: "QL server error(Update)" };
       });
   } else {
+    // ID 不存在，新增变量
     response = await fetch(`${ql_address}/open/envs`, {
       method: "POST",
       headers: {
