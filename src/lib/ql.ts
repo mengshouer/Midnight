@@ -18,7 +18,7 @@ type TEnv = {
   created: number;
   status: number;
   position: number;
-  remark?: string;
+  remarks?: string;
 };
 
 export function validateJDCK(ck: string) {
@@ -31,15 +31,12 @@ export function validateJDCK(ck: string) {
   return { pt_key: pt_key[1], pt_pin: pt_pin[1] };
 }
 
-function filterID(value_name: string, all_env: TEnv[]) {
-  let _id = "";
+function filterSingleEnv(value_name: string, all_env: TEnv[]) {
   for (const env of all_env) {
     if (env.value.match(value_name)) {
-      _id = env._id;
-      break;
+      return env;
     }
   }
-  return _id;
 }
 
 async function getToken() {
@@ -79,7 +76,7 @@ async function getEnv() {
   return response;
 }
 
-async function filterEnv(env_name: string) {
+async function filterAllEnv(env_name: string) {
   return await getEnv().then((res) => {
     return res.data.filter((item: TEnv) => item.name === env_name);
   });
@@ -109,19 +106,20 @@ export async function updateEnv(
   value_name: string,
   remarks = ""
 ) {
-  const filter_env = await filterEnv(env_name);
-  const _id = filterID(value_name, filter_env);
+  const filter_env = await filterAllEnv(env_name);
+  const env = filterSingleEnv(value_name, filter_env);
+  const envRemarks = env?.remarks && remarks !== "remove" ? env?.remarks : "";
   const data: IUpdateEnv[] = [
     {
       name: env_name,
       value,
-      remarks,
+      remarks: remarks && remarks !== "remove" ? remarks : envRemarks,
     },
   ];
   let response;
-  if (_id) {
+  if (env?._id) {
     // ID 已经存在，更新变量
-    data[0]["_id"] = _id;
+    data[0]["_id"] = env._id;
     response = await fetch(`${ql_address}/open/envs`, {
       method: "PUT",
       headers: {
@@ -130,7 +128,7 @@ export async function updateEnv(
       },
       body: JSON.stringify(data[0]),
     })
-      .then(async (res) => await enableEnv(_id).then(() => res.json()))
+      .then(async (res) => await enableEnv(env._id).then(() => res.json()))
       .catch(() => {
         return { code: 500, data: "QL server error(Update)" };
       });
