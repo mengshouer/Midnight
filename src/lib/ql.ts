@@ -106,8 +106,8 @@ export async function updateEnv(
   value_name: string,
   remarks = ""
 ) {
-  const filter_env = await filterAllEnv(env_name);
-  const env = filterSingleEnv(value_name, filter_env);
+  const all_env = await filterAllEnv(env_name);
+  const env = filterSingleEnv(value_name, all_env);
   const envRemarks = env?.remarks && remarks !== "remove" ? env?.remarks : "";
   const data: IUpdateEnv[] = [
     {

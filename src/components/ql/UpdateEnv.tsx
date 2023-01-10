@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
+import { validateJDCK } from "../../lib/ql";
 
 export default function UpdateEnv() {
   const [env, setEnv] = useState("");
@@ -23,6 +24,11 @@ export default function UpdateEnv() {
   );
 
   const handleUpdate = () => {
+    if (!validateJDCK(env)) {
+      setAlert("Cookie is invalid");
+      setTimeout(() => setAlert(""), 3000);
+      return;
+    }
     updateEnv({ cookie: env, remarks });
   };
 

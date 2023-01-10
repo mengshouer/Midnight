@@ -25,7 +25,7 @@ const MessageHandler: NextApiHandler = async (req, res) => {
   if (validate) {
     const response = await updateEnv(
       "JD_COOKIE",
-      data.cookie,
+      `pt_key=${validate.pt_key};pt_pin=${validate.pt_pin};`,
       validate.pt_pin,
       data.remarks
     );
