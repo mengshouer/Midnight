@@ -51,5 +51,6 @@ export async function getStaticProps() {
       mdContent,
       url: process.env.IFRAME_URL,
     },
+    revalidate: 10,
   };
 }
