@@ -1,14 +1,17 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiHandler } from "next";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 import { updateEnv, validateJDCK } from "../../../src/lib/ql";
 import prisma from "../../../src/lib/prisma";
+import { authOptions } from "../auth/[...nextauth]";
 
 const MessageHandler: NextApiHandler = async (req, res) => {
   // 身份判断
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
-    res.status(401).json({ message: "Unauthorized" });
+    res
+      .status(401)
+      .json({ message: "Unauthorized. You can log in again and try again." });
     return;
   }
   const exists = await prisma.user.findFirst({
