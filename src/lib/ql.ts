@@ -10,7 +10,7 @@ let ql_auth: string;
 let ql_auth_expiration: number;
 // ----------------
 
-type TEnv = {
+export type QLEnv = {
   _id: string;
   name: string;
   value: string;
@@ -20,6 +20,21 @@ type TEnv = {
   position: number;
   remarks?: string;
 };
+
+export interface JDInfoProps {
+  [name: string]: {
+    cookie: string;
+    remarks: string;
+    enable: boolean;
+  };
+}
+
+interface IUpdateEnv {
+  name: string;
+  value: string;
+  _id?: string;
+  remarks?: string;
+}
 
 export function validateJDCK(ck: string) {
   const pin_rex = /pt_pin=(.*?);/;
@@ -31,7 +46,7 @@ export function validateJDCK(ck: string) {
   return { pt_key: pt_key[1], pt_pin: pt_pin[1] };
 }
 
-function filterSingleEnv(value_name: string, all_env: TEnv[]) {
+function filterSingleEnv(value_name: string, all_env: QLEnv[]) {
   for (const env of all_env) {
     if (env.value.match(value_name)) {
       return env;
@@ -65,7 +80,7 @@ async function getAuth() {
   return ql_auth;
 }
 
-async function getEnv() {
+async function getEnv(): Promise<{ code: number; data: QLEnv[] }> {
   const response = await fetch(`${ql_address}/open/envs`, {
     headers: { Authorization: await getAuth() },
   })
@@ -76,9 +91,9 @@ async function getEnv() {
   return response;
 }
 
-async function filterAllEnv(env_name: string) {
+export async function filterAllEnv(env_name: string): Promise<QLEnv[]> {
   return await getEnv().then((res) => {
-    return res.data.filter((item: TEnv) => item.name === env_name);
+    return res.data.filter((item: QLEnv) => item.name === env_name);
   });
 }
 
@@ -91,13 +106,6 @@ export async function enableEnv(_id: string) {
     },
     body: JSON.stringify([_id]),
   });
-}
-
-interface IUpdateEnv {
-  name: string;
-  value: string;
-  _id?: string;
-  remarks?: string;
 }
 
 export async function updateEnv(

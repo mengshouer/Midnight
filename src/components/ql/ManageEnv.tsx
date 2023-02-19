@@ -1,55 +1,64 @@
-// import { useQuery } from "react-query";
-
-interface cookieProps {
-  name: string;
-  value: string;
-  enable: boolean;
-}
-
-const localCookie = [
-  {
-    name: "cookie1",
-    value: "value1",
-    enable: true,
-  },
-  {
-    name: "cookie2",
-    value: "value2",
-    enable: true,
-  },
-  {
-    name: "cookie3",
-    value: "value3",
-    enable: true,
-  },
-];
-
-// const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import type { JDInfoProps } from "../../lib/ql";
 
 export default function ManageEnv() {
-  // const { data, error } = useQuery("/api/ql/getenv", () =>
-  //   fetcher("/api/ql/getenv")
-  // );
+  const QueryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery(
+    "/api/user/info",
+    (): Promise<JDInfoProps> =>
+      fetch("/api/user/info").then((res) => res.json())
+  );
+
+  const { mutate } = useMutation(
+    (key: string) =>
+      fetch("/api/user/info", {
+        method: "DELETE",
+        body: key,
+      }),
+    {
+      onSuccess: () => {
+        QueryClient.invalidateQueries("/api/user/info");
+      },
+    }
+  );
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="overflow-x-auto w-full">
       <table className="table table-compact w-full">
         <thead>
-          <tr>
-            <th>Cookie</th>
-            <th>Value</th>
+          <tr className="text-center">
+            <th>Enable</th>
             <th>Action</th>
+            <th>Remarks</th>
+            <th>Cookie</th>
           </tr>
         </thead>
         <tbody>
-          {/* {error && <div>{error as string}</div>} */}
-          {localCookie.map((item: cookieProps) => (
-            <tr key={item.name}>
-              <td>{item.name}</td>
-              <td>{item.value}</td>
+          {Object.entries(data || {}).map(([key, value]) => (
+            <tr key={key} className="hover text-center">
               <td>
-                <button className="btn btn-ghost btn-sm">Delete</button>
+                <label>
+                  <input
+                    readOnly
+                    type="checkbox"
+                    className="checkbox hover:cursor-default"
+                    checked={value.enable || false}
+                  />
+                </label>
               </td>
+              <td>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => mutate(key)}
+                >
+                  Delete
+                </button>
+              </td>
+              <td className="text-left">{value.remarks}</td>
+              <td className="text-left">{value.cookie}</td>
             </tr>
           ))}
         </tbody>

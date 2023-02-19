@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { updateEnv, validateJDCK } from "../../../src/lib/ql";
 import prisma from "../../../src/lib/prisma";
 import { authOptions } from "../auth/[...nextauth]";
+import { upsert } from "../../../src/lib/sqlutils";
 
 const MessageHandler: NextApiHandler = async (req, res) => {
   // 身份判断
@@ -32,8 +33,10 @@ const MessageHandler: NextApiHandler = async (req, res) => {
       validate.pt_pin,
       data.remarks
     );
-    if (response.code === 200) res.status(200).json({ message: "ok" });
-    else res.status(500).json({ message: response.message });
+    if (response.code === 200) {
+      res.status(200).json({ message: "ok" });
+      await upsert(session, validate.pt_pin, data.cookie, data.remarks);
+    } else res.status(500).json({ message: response.message });
   } else {
     res.status(400).json({ message: "Invalid Cookie" });
   }

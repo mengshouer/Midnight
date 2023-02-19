@@ -21,7 +21,7 @@ export default function Tabs({
         }`}
         onClick={() => setActiveTab("Manage")}
       >
-        Manage(Todo...)
+        Manage
       </a>
     </div>
   );

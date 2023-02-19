@@ -5,18 +5,11 @@ import { Tabs, UpdateEnv, ManageEnv } from "../src/components/ql";
 import markdownToHtml from "../src/lib/markdownToHtml";
 import { getMarkdown } from "../src/lib/api";
 
-export default function Index({
-  mdContent,
-  url,
-}: {
-  mdContent: string;
-  url: string;
-}) {
+const Middle = ({ url }: { url: string }) => {
   const [siteFlag, setSiteFlag] = useState(false);
   const [activeTab, setActiveTab] = useState("Update");
   return (
-    <Layout>
-      {/* 中间部分 */}
+    <>
       <div className="card bg-base-300 shadow-xl m-2 overflow-x-auto w-full">
         <div className="card-body">
           <h2 className="card-title">
@@ -38,6 +31,21 @@ export default function Index({
       {siteFlag && url && (
         <iframe className="rounded-xl w-full h-[60vh]" src={url} />
       )}
+    </>
+  );
+};
+
+export default function Index({
+  mdContent,
+  url,
+}: {
+  mdContent: string;
+  url: string;
+}) {
+  return (
+    <Layout>
+      {/* 中间部分 */}
+      <Middle url={url} />
       {/* 渲染 markdown */}
       {mdContent && <Footer content={mdContent} />}
     </Layout>
