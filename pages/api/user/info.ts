@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth/next";
 // import crypto from "crypto";
 import prisma from "../../../src/lib/prisma";
 import { authOptions } from "../auth/[...nextauth]";
-import { type JDInfoProps, filterAllEnv } from "../../../src/lib/ql";
+import { type JDInfoProps, filterAllEnv, deleteEnv } from "../../../src/lib/ql";
 import { remove } from "../../../src/lib/sqlutils";
 
 const MessageHandler: NextApiHandler = async (request, response) => {
@@ -16,23 +16,27 @@ const MessageHandler: NextApiHandler = async (request, response) => {
     const jd_info: JDInfoProps = exists?.jd_info
       ? JSON.parse(exists.jd_info)
       : {};
-    if (request.method === "GET") {
-      const ql_env = await filterAllEnv("JD_COOKIE");
-      // 全等比较cookie
-      for (const env of ql_env) {
-        for (const [key, value] of Object.entries(jd_info)) {
-          if (env.value === value.cookie) {
-            jd_info[key].enable = env.status !== 1;
-          }
+
+    const ql_env = await filterAllEnv("JD_COOKIE");
+    for (const env of ql_env) {
+      for (const [key, value] of Object.entries(jd_info)) {
+        if (env.value === value.cookie) {
+          jd_info[key]._id = env._id;
+          jd_info[key].enable = env.status !== 1;
         }
       }
-      response.status(200).json(jd_info);
     }
 
-    if (request.method === "DELETE") {
-      const key: string = request.body;
-      key && session && (await remove(session, key));
+    if (request.method === "GET") {
       response.status(200).json(jd_info);
+    } else if (request.method === "DELETE") {
+      const key = request.body;
+      key && session && (await remove(session, key));
+      const id = jd_info[key]._id;
+      id && (await deleteEnv([id]));
+      response.status(200).end();
+    } else {
+      response.status(405).end();
     }
   } catch (err) {
     response.status(500).end();

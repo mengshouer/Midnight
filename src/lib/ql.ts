@@ -23,9 +23,10 @@ export type QLEnv = {
 
 export interface JDInfoProps {
   [name: string]: {
+    _id?: string;
     cookie: string;
     remarks: string;
-    enable: boolean;
+    enable?: boolean;
   };
 }
 
@@ -153,4 +154,15 @@ export async function updateEnv(
   }
 
   return response;
+}
+
+export async function deleteEnv(id: string[]) {
+  return await fetch(`${ql_address}/open/envs`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: await getAuth(),
+    },
+    body: JSON.stringify(id),
+  });
 }

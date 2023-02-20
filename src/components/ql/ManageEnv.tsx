@@ -23,11 +23,18 @@ export default function ManageEnv() {
     }
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <progress className="progress w-full"></progress>;
 
   return (
     <div className="overflow-x-auto w-full">
-      <table className="table table-compact w-full">
+      <table
+        className="table table-compact w-full"
+        onClick={(e) => {
+          e.stopPropagation();
+          const target = e.target as HTMLInputElement;
+          mutate(target.id);
+        }}
+      >
         <thead>
           <tr className="text-center">
             <th>Enable</th>
@@ -50,10 +57,7 @@ export default function ManageEnv() {
                 </label>
               </td>
               <td>
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => mutate(key)}
-                >
+                <button className="btn btn-ghost btn-sm" id={key}>
                   Delete
                 </button>
               </td>

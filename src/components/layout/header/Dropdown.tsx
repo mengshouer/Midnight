@@ -1,4 +1,5 @@
 import { Bars3BottomLeftIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function Dropdown() {
   return (
@@ -11,13 +12,19 @@ export default function Dropdown() {
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
         <li>
-          <a>Homepage</a>
+          <Link href="/">Homepage</Link>
         </li>
         <li>
           <a>Admin</a>
         </li>
         <li>
-          <a>About</a>
+          <a
+            href="https://github.com/mengshouer/Midnight"
+            target="_blank"
+            rel="noreferrer"
+          >
+            About
+          </a>
         </li>
       </ul>
     </div>
