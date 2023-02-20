@@ -10,6 +10,7 @@ const MessageHandler: NextApiHandler = async (request, response) => {
 
     if (!process.env.CLOSE_AUTH_CODE && authcode !== process.env.AUTH_CODE) {
       response.status(401).json({ message: "Invalid auth code" });
+      return;
     }
 
     const exists = await prisma.user.findFirst({

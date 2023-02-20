@@ -54,6 +54,7 @@ export default function SignUp({
             type="email"
             id="email"
             name="email"
+            required
             placeholder="Type email here"
             className="w-full bg-gray-200 rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           />
@@ -66,6 +67,7 @@ export default function SignUp({
             type="password"
             id="password"
             name="password"
+            required
             placeholder="Type password here"
             className="w-full bg-gray-200 rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           />
@@ -110,5 +112,6 @@ export async function getStaticProps() {
     props: {
       close_auth_code: process.env.CLOSE_AUTH_CODE,
     },
+    revalidate: 3,
   };
 }
