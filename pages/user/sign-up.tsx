@@ -107,11 +107,10 @@ export default function SignUp({
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   return {
     props: {
       close_auth_code: process.env.CLOSE_AUTH_CODE,
     },
-    revalidate: 3,
   };
 }

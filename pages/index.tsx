@@ -52,13 +52,12 @@ export default function Index({
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const mdContent = await markdownToHtml(getMarkdown("notice") || "");
   return {
     props: {
       mdContent,
       url: process.env.IFRAME_URL,
     },
-    revalidate: 3,
   };
 }
