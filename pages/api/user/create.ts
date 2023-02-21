@@ -32,8 +32,14 @@ const MessageHandler: NextApiHandler = async (request, response) => {
       });
       response.status(200).json(user);
     }
-  } catch (err) {
-    response.status(500).end();
+  } catch (error: Error | unknown) {
+    let message: string;
+    if (error instanceof Error) {
+      message = error.message;
+    } else {
+      message = String(error);
+    }
+    response.status(500).json({ message });
   }
 };
 
