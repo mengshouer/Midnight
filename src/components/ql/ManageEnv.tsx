@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import type { JDInfoProps } from "../../lib/ql";
+import { DoubleClickButton } from "../common";
 
 export default function ManageEnv() {
   const QueryClient = useQueryClient();
@@ -57,9 +58,9 @@ export default function ManageEnv() {
                 </label>
               </td>
               <td>
-                <button className="btn btn-ghost btn-sm" id={key}>
+                <DoubleClickButton className="btn btn-ghost btn-sm" id={key}>
                   Delete
-                </button>
+                </DoubleClickButton>
               </td>
               <td className="text-left">{value.remarks}</td>
               <td className="text-left">{value.cookie}</td>
